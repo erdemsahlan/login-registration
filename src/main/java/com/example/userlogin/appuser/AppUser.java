@@ -7,7 +7,6 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,34 +18,34 @@ import java.util.Collections;
 @Entity
 public class AppUser implements UserDetails {
 
+
+    @SequenceGenerator(
+            name = "student_sequence",
+            sequenceName = "student_sequence",
+            allocationSize = 1
+    )
     @Id
-    @SequenceGenerator(name = "student_sequence",
-                       sequenceName = "student_sequence",
-                        allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,
-                     generator = "student_sequence")
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "student_sequence"
+    )
     private Long id;
-
     private String firstName;
-
-    private String surname;
-
+    private String lastName;
     private String email;
-
     private String password;
-
     @Enumerated(EnumType.STRING)
     private AppUserRole appUserRole;
-
-    private Boolean locked;
-
-    private Boolean enabled;
+    private Boolean locked = false;
+    private Boolean enabled = false;
 
     public AppUser(String firstName,
+                   String lastName,
                    String email,
                    String password,
                    AppUserRole appUserRole) {
         this.firstName = firstName;
+        this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.appUserRole = appUserRole;
@@ -54,9 +53,9 @@ public class AppUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority=
+        SimpleGrantedAuthority authority =
                 new SimpleGrantedAuthority(appUserRole.name());
-        return Collections.singleton(authority);
+        return Collections.singletonList(authority);
     }
 
     @Override
@@ -69,12 +68,12 @@ public class AppUser implements UserDetails {
         return email;
     }
 
-    public String getFirstname() {
+    public String getFirstName() {
         return firstName;
     }
 
-    public String getLastname() {
-        return getLastname();
+    public String getLastName() {
+        return lastName;
     }
 
     @Override
